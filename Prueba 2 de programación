@@ -1,0 +1,100 @@
+package com.mycompany.registrodevisitantes;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class RegistrodeVisitantes {
+    private JFrame frame;
+    private JTextField campoNombre;
+    private JTextArea areaDetalles;
+    private String tipoPersona = "";
+
+    public RegistrodeVisitantes() {
+        frame = new JFrame("Registro de Visitantes");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+        frame.setSize(800, 800); // Ajustamos al tamaño de 800 x 800 como lo muestra en el ejemplo 
+        frame.setLayout(new BorderLayout(10, 10)); 
+    
+        JPanel panelSuperior = new JPanel();
+        panelSuperior.setLayout(new BoxLayout(panelSuperior, BoxLayout.Y_AXIS));
+        panelSuperior.setBorder(BorderFactory.createTitledBorder("Datos del Visitante"));
+
+        
+        JPanel panelNombre = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelNombre.add(new JLabel("Nombre:"));
+        campoNombre = new JTextField(20);
+        panelNombre.add(campoNombre);
+
+        JPanel panelTipoPersona = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton btnEmpleado = new JButton("Empleado");
+        JButton btnVisitante = new JButton("Visitante");
+        
+        JLabel tipo = new JLabel("Selecciona el tipo :");
+        panelTipoPersona.add(tipo);
+        
+        btnEmpleado.addActionListener(e -> tipoPersona = "Empleado");
+        btnVisitante.addActionListener(e -> tipoPersona = "Visitante");
+
+        panelTipoPersona.add(btnEmpleado);
+        panelTipoPersona.add(btnVisitante);
+        
+        JLabel TipoSelec = new JLabel("Tipo Seleccionado : ");
+        panelTipoPersona.add(TipoSelec);
+        
+        JPanel panelAcciones = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton btnRegistrar = new JButton("Registrar");
+        JButton btnBorrar = new JButton("Borrar");
+
+        btnRegistrar.addActionListener(e -> {
+            String nombre = campoNombre.getText().trim();
+            if (nombre.isEmpty() || tipoPersona.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Por favor, ingrese un nombre y seleccione el tipo de persona.", "Error", JOptionPane.WARNING_MESSAGE);
+            } else {
+                LocalDateTime ahora = LocalDateTime.now();
+                DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+                String horaFormateada = ahora.format(formato);
+
+                areaDetalles.append("Nombre: " + nombre + " (" + tipoPersona + ")" + "- Hora : " + horaFormateada);
+            }
+        });
+
+        btnBorrar.addActionListener(e -> {
+            campoNombre.setText("");
+            areaDetalles.setText("");
+            tipoPersona = "";
+        });
+
+        panelAcciones.add(btnRegistrar);
+        panelAcciones.add(btnBorrar);
+
+        panelSuperior.add(panelNombre);
+        panelSuperior.add(panelTipoPersona);
+        panelSuperior.add(Box.createVerticalStrut(10));
+        panelSuperior.add(panelAcciones);
+
+        frame.add(panelSuperior, BorderLayout.NORTH);
+
+        JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        areaDetalles = new JTextArea(95, 95); 
+        areaDetalles.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        areaDetalles.setEditable(false);
+        JScrollPane scrollDetalles = new JScrollPane(areaDetalles);
+        scrollDetalles.setBorder(BorderFactory.createTitledBorder("Registros"));
+        panelInferior.add(scrollDetalles);
+
+        frame.add(panelInferior, BorderLayout.CENTER);
+
+        frame.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new RegistrodeVisitantes();
+    }
+}
+// El boxLayaout lo utilizamos para organizar los componentes en columnas.
+// El FlowLayaout lo utilizamos tambine para distribuir los elementos sea para la izquierda o para la derecha 
+// El BoderDActory es para crear los bordes de los elementos lo vi en un video ya sea para el norte, sur, Este o Oeste
+// Eso es todo profesor ...
